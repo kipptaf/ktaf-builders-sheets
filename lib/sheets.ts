@@ -15,8 +15,11 @@ const REQUIRED = [
   'GCP_SERVICE_ACCOUNT_EMAIL',
 ] as const;
 
+// Checked at request time, not during `next build`, because preview builds
+// don't have these variables and would otherwise fail to build.
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build';
 const missing = REQUIRED.filter((name) => !process.env[name]);
-if (missing.length) {
+if (missing.length && !isBuild) {
   throw new Error(
     `Missing environment variables: ${missing.join(', ')}. Add them in Vercel -> Settings -> Environment Variables (Production).`,
   );
